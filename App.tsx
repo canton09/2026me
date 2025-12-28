@@ -5,9 +5,7 @@ import { Step } from './types';
 import StepCard from './components/StepCard';
 import ApiKeySelector from './components/ApiKeySelector';
 import { decomposeGoal } from './services/geminiService';
-// @ts-ignore
 import { jsPDF } from 'jspdf';
-// @ts-ignore
 import html2canvas from 'html2canvas';
 
 const DAILY_LIMIT = 2;

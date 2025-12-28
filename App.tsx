@@ -36,28 +36,80 @@ const LOG_MESSAGES = [
 ];
 
 const NeuralNetworkSVG = () => (
-  <svg className="w-48 h-48 md:w-64 md:h-64 opacity-80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="100" cy="100" r="40" stroke="#6366f1" strokeWidth="0.5" className="animate-pulse" />
-    <circle cx="100" cy="100" r="60" stroke="#6366f1" strokeWidth="0.5" strokeDasharray="4 4" className="animate-[spin_10s_linear_infinite]" />
-    <circle cx="100" cy="100" r="80" stroke="#a855f7" strokeWidth="0.5" strokeDasharray="10 5" className="animate-[spin_20s_linear_infinite_reverse]" />
-    
-    <g className="nodes">
-      {[...Array(8)].map((_, i) => {
-        const angle = (i * Math.PI * 2) / 8;
-        const x = 100 + Math.cos(angle) * 70;
-        const y = 100 + Math.sin(angle) * 70;
+  <svg className="w-64 h-64 md:w-80 md:h-80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <linearGradient id="coreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#6366f1" />
+        <stop offset="100%" stopColor="#a855f7" />
+      </linearGradient>
+    </defs>
+
+    {/* Background Intricate Rings */}
+    <circle cx="100" cy="100" r="90" stroke="#6366f1" strokeWidth="0.2" strokeDasharray="2 4" opacity="0.2" className="animate-[spin_60s_linear_infinite]" />
+    <circle cx="100" cy="100" r="80" stroke="#a855f7" strokeWidth="0.5" strokeDasharray="10 20" opacity="0.3" className="animate-[spin_40s_linear_infinite_reverse]" />
+    <circle cx="100" cy="100" r="65" stroke="#6366f1" strokeWidth="1" strokeDasharray="100 100" opacity="0.1" className="animate-[spin_20s_linear_infinite]" />
+
+    {/* Neural Connections & Energy Flow */}
+    <g className="connections">
+      {[...Array(12)].map((_, i) => {
+        const angle = (i * Math.PI * 2) / 12;
+        const x2 = 100 + Math.cos(angle) * 75;
+        const y2 = 100 + Math.sin(angle) * 75;
         return (
-          <circle key={i} cx={x} cy={y} r="3" fill="#6366f1">
-            <animate attributeName="r" values="3;5;3" dur={`${1 + i * 0.2}s`} repeatCount="indefinite" />
-            <animate attributeName="opacity" values="1;0.2;1" dur={`${1 + i * 0.2}s`} repeatCount="indefinite" />
-          </circle>
+          <g key={`neural-${i}`}>
+            {/* Connection Line */}
+            <line x1="100" y1="100" x2={x2} y2={y2} stroke="#6366f1" strokeWidth="0.5" opacity="0.2" />
+            
+            {/* Energy Particle traveling from center */}
+            <circle r="1.5" fill="#818cf8" filter="url(#glow)">
+              <animateMotion 
+                path={`M100 100 L${x2} ${y2}`} 
+                dur={`${1.2 + Math.random() * 0.8}s`} 
+                repeatCount="indefinite" 
+                begin={`${i * 0.15}s`}
+              />
+              <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" />
+            </circle>
+
+            {/* Sub-node at the end */}
+            <circle cx={x2} cy={y2} r="3" fill="#6366f1" filter="url(#glow)">
+              <animate attributeName="r" values="2;4;2" dur={`${2 + i * 0.1}s`} repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + i * 0.1}s`} repeatCount="indefinite" />
+            </circle>
+
+            {/* Decorative orbit for sub-node */}
+            <circle cx={x2} cy={y2} r="6" stroke="#a855f7" strokeWidth="0.2" strokeDasharray="1 2" opacity="0.5" className="animate-[spin_5s_linear_infinite]" />
+          </g>
         );
       })}
     </g>
 
-    <path d="M100 100 L135 35 M100 100 L165 100 M100 100 L135 165 M100 100 L65 165 M100 100 L35 100 M100 100 L65 35" stroke="#6366f1" strokeWidth="0.5" opacity="0.3">
-      <animate attributeName="stroke-dasharray" values="0,200;200,0" dur="3s" repeatCount="indefinite" />
-    </path>
+    {/* Central Processing Core */}
+    <g filter="url(#glow)">
+      <circle cx="100" cy="100" r="18" fill="url(#coreGradient)" opacity="0.15" className="animate-pulse" />
+      <circle cx="100" cy="100" r="12" fill="url(#coreGradient)" opacity="0.3">
+        <animate attributeName="r" values="10;14;10" dur="1.5s" repeatCount="indefinite" />
+      </circle>
+      <path d="M100 88 L110.39 94 L110.39 106 L100 112 L89.61 106 L89.61 94 Z" fill="#6366f1" opacity="0.8" className="animate-[spin_8s_linear_infinite]">
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" />
+      </path>
+    </g>
+
+    {/* Data Streams (Random small particles in background) */}
+    {[...Array(20)].map((_, i) => (
+      <circle key={`particle-${i}`} r="0.8" fill="#ffffff" opacity="0.2">
+        <animate attributeName="cx" values={`${Math.random() * 200};${Math.random() * 200}`} dur={`${5 + Math.random() * 10}s`} repeatCount="indefinite" />
+        <animate attributeName="cy" values={`${Math.random() * 200};${Math.random() * 200}`} dur={`${5 + Math.random() * 10}s`} repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.5;0" dur="3s" repeatCount="indefinite" />
+      </circle>
+    ))}
   </svg>
 );
 
@@ -234,8 +286,8 @@ const App: React.FC = () => {
              {/* 核心 SVG 动画 */}
              <div className="relative flex items-center justify-center">
                 <NeuralNetworkSVG />
-                <div className="absolute inset-0 flex items-center justify-center">
-                   <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center animate-pulse">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                   <div className="w-24 h-24 bg-indigo-500/10 rounded-full flex items-center justify-center animate-pulse border border-indigo-500/20">
                       <Icons.Sparkles />
                    </div>
                 </div>

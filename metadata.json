@@ -1,0 +1,8 @@
+{
+  "name": "2026 愿望拆解专家",
+  "description": "一个结合科学方法论（如SMART、WOOP、OKRs）的2026年度计划拆解工具，利用AI生成精美视觉引导图。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
